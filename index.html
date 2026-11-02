@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UASD | Diplomado Alfabetización en Etapa Oportuna - Evaluación Docente</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* Estilos base seguros */
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .likert-btn-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background-color: #ffffff;
+      color: #334155;
+      user-select: none;
+      transition: all 0.15s ease-in-out;
+    }
+    .likert-btn-label:hover {
+      background-color: #f1f5f9;
+      border-color: #1e40af;
+      color: #1e40af;
+    }
+    .likert-radio:checked + .likert-btn-label {
+      background-color: #1e40af !important;
+      color: #ffffff !important;
+      border-color: #1e40af !important;
+      box-shadow: 0 2px 6px rgba(30, 64, 175, 0.35);
+      font-weight: 700;
+    }
+    .tab-btn-active {
+      border-bottom: 3px solid #1e40af !important;
+      color: #1e40af !important;
+      font-weight: 700 !important;
+    }
+    .tr-docente-active {
+      background-color: #eff6ff !important;
+      border-left: 4px solid #1e40af !important;
+    }
+    @media print {
+      header, nav, #toast, .no-print { display: none !important; }
+      body { background-color: #ffffff !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ================= BARRA SUPERIOR LIMPIA ================= -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Identidad Institucional -->
+        <div class="flex items-center space-x-3">
+          <img src="assets/image1.jpeg" alt="UASD" class="h-9 w-9 object-contain rounded-full shadow-sm border border-slate-100" onerror="this.style.display='none'">
+          <div>
+            <h1 class="text-sm font-bold text-slate-900 leading-tight">UASD - Centro Regional Azua</h1>
+            <p class="text-xs text-slate-500">Diplomado Alfabetización en Etapa Oportuna</p>
+          </div>
+        </div>
+
+        <!-- Indicador discreto de estado -->
+        <div class="flex items-center space-x-2">
+          <span id="badge-cloud-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm">
+            <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            En línea
+          </span>
+          <button type="button" onclick="cargarEvaluacionesNube()" class="text-xs text-slate-600 hover:text-blue-700 p-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 transition" title="Sincronizar datos">
+            <i class="ph ph-arrows-clockwise text-sm"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Navegación por pestañas limpia (SOLO FORMULARIO Y REPORTERÍA) -->
+      <nav class="flex space-x-8 -mb-px">
+        <button type="button" onclick="cambiarPestana('evaluacion')" id="tab-btn-evaluacion" class="tab-btn-active inline-flex items-center py-3 px-2 border-b-2 text-sm font-medium text-slate-700 transition">
+          <i class="ph ph-clipboard-text text-lg mr-2"></i>
+          Formulario de Evaluación
+        </button>
+        <button type="button" onclick="cambiarPestana('reporteria')" id="tab-btn-reporteria" class="inline-flex items-center py-3 px-2 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-700 transition">
+          <i class="ph ph-chart-bar text-lg mr-2"></i>
+          Reportería & Analítica
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= CONTENIDO PRINCIPAL ================= -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+
+    <!-- ============================================================== -->
+    <!-- PESTAÑA 1: FORMULARIO OFICIAL DE EVALUACIÓN DEL MÓDULO -->
+    <!-- ============================================================== -->
+    <section id="pestana-evaluacion" style="display: block;" class="space-y-6">
+
+      <!-- Encabezado Institucional Oficial con los 3 Logos CENTRADOS -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+        
+        <!-- LOGOS TOTALMENTE CENTRADOS Y ARMONIOSOS -->
+        <div class="flex items-center justify-center gap-4 sm:gap-8 pb-6 border-b border-slate-200">
+          <!-- Logo 1: UASD -->
+          <img src="assets/image1.jpeg" alt="Sello UASD" class="h-16 w-16 sm:h-20 sm:w-20 object-contain drop-shadow-sm transition hover:scale-105 duration-200" onerror="this.style.display='none'">
+          
+          <!-- Logo 2: MINERD (Centro) -->
+          <img src="assets/image2.jpeg" alt="Ministerio de Educación" class="h-12 sm:h-16 object-contain drop-shadow-sm px-2" onerror="this.style.display='none'">
+          
+          <!-- Logo 3: Facultad de Ciencias de la Educación -->
+          <img src="assets/image3.png" alt="Facultad de Ciencias de la Educación" class="h-16 w-16 sm:h-20 sm:w-20 object-contain drop-shadow-sm transition hover:scale-105 duration-200" onerror="this.style.display='none'">
+        </div>
+
+        <!-- Títulos Centrados -->
+        <div class="text-center mt-6 space-y-1">
+          <h2 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-wider uppercase">Universidad Autónoma de Santo Domingo</h2>
+          <p class="text-xs sm:text-sm font-bold text-slate-700 uppercase">Facultad de Ciencias de la Educación</p>
+          <p class="text-xs sm:text-sm font-semibold text-blue-900">UASD - Centro Regional Azua</p>
+          
+          <div class="pt-3 pb-1">
+            <span class="inline-block bg-blue-50 border border-blue-200 text-blue-900 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full shadow-sm">
+              Diplomado Alfabetización en Etapa Oportuna
+            </span>
+          </div>
+
+          <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 pt-2 uppercase tracking-tight">
+            Formulario de Evaluación de Módulo y Satisfacción Docente
+          </h3>
+          <p class="text-xs text-slate-500 max-w-2xl mx-auto pt-1 leading-relaxed">
+            Estimado participante, le agradecemos responder este formulario con total sinceridad. Sus respuestas son confidenciales y nos ayudarán a mantener la calidad y mejorar nuestras futuras acciones formativas.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- FORMULARIO INTERACTIVO -->
+      <form id="form-evaluacion" onsubmit="guardarEvaluacion(event)" class="space-y-6">
+
+        <!-- BLOQUE A: SELECCIÓN DE MÓDULO, FECHA Y FACILITADOR CON COTEJO -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-6">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Selección de Módulo -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                1. Selecciona el Módulo Evaluado *
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="btn-modulo-lengua" onclick="cambiarModulo('Lengua Española')" class="p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-blue-700 bg-blue-50 text-blue-900 shadow-sm flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-blue-700 inline-block"></span>
+                  Lengua Española
+                </button>
+                <button type="button" id="btn-modulo-mate" onclick="cambiarModulo('Matemáticas')" class="p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-slate-300 bg-white text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-slate-300 inline-block"></span>
+                  Matemáticas
+                </button>
+              </div>
+            </div>
+
+            <!-- Fecha de Evaluación -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2" for="fecha_evaluacion">
+                2. Fecha de Evaluación *
+              </label>
+              <input type="date" id="fecha_evaluacion" required
+                class="w-full rounded-xl border-slate-300 border px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition bg-white">
+            </div>
+          </div>
+
+          <!-- Tabla con Columna de Cotejo (✓) -->
+          <div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                <span id="titulo-docentes">3. Docentes / Facilitadores del Módulo de Lengua Española</span> *
+              </label>
+              <span class="text-xs text-blue-800 font-medium bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
+                ✓ Haz clic sobre la fila del docente que estás evaluando
+              </span>
+            </div>
+
+            <!-- Tabla interactiva de Facilitadores con Cotejo -->
+            <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm bg-white">
+              <table class="w-full text-left text-xs sm:text-sm">
+                <thead class="bg-slate-50 text-slate-700 font-bold uppercase border-b border-slate-200 text-xs">
+                  <tr>
+                    <th class="py-2.5 px-3 text-center w-16">Cotejo</th>
+                    <th class="py-2.5 px-3 text-center w-12">No.</th>
+                    <th class="py-2.5 px-4">Nombre del Docente / Facilitador</th>
+                    <th class="py-2.5 px-3 text-center">Grado</th>
+                    <th class="py-2.5 px-3 text-center w-24">Sección</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-facilitadores-body" class="divide-y divide-slate-100">
+                  <!-- Generado dinámicamente con JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Alerta visual del facilitador seleccionado -->
+            <div id="facilitador-seleccionado-badge" class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs sm:text-sm text-blue-950 font-medium">
+              <span class="flex items-center gap-2">
+                <i class="ph ph-user-check text-lg text-blue-700"></i>
+                <span>Docente seleccionado: <strong id="nombre-docente-seleccionado" class="text-blue-700 font-bold">Ninguno (haz clic en un docente arriba)</strong></span>
+              </span>
+              <span id="detalle-docente-badge" class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-900"></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Escala de Valoración Compacta -->
+        <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <h4 class="font-bold text-sm flex items-center gap-2">
+                <i class="ph ph-star text-amber-400 text-base"></i> Escala de Valoración (1 a 5)
+              </h4>
+              <p class="text-xs text-slate-300">Selecciona el número que mejor refleje su opinión en cada criterio:</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="px-2 py-1 bg-white/10 rounded border border-white/20"><strong>1</strong> = Muy insatisfecho</span>
+              <span class="px-2 py-1 bg-white/10 rounded border border-white/20"><strong>2</strong> = Insatisfecho</span>
+              <span class="px-2 py-1 bg-white/10 rounded border border-white/20"><strong>3</strong> = Regular</span>
+              <span class="px-2 py-1 bg-white/10 rounded border border-white/20"><strong>4</strong> = Satisfecho</span>
+              <span class="px-2 py-1 bg-amber-400 text-slate-900 font-bold rounded shadow"><strong>5</strong> = Muy satisfecho</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN I: ASPECTOS METODOLÓGICOS Y CONTENIDO -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-4">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3 border-slate-100">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">I</span>
+            Aspectos Metodológicos y Contenido del Curso
+          </h3>
+
+          <div class="divide-y divide-slate-100 text-xs sm:text-sm space-y-3 pt-1">
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">1. Los objetivos del curso se presentaron de forma clara al inicio.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c1"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">2. Los contenidos abordados respondieron a mis expectativas profesionales.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c2"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">3. El tiempo asignado fue suficiente para desarrollar todos los temas.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c3"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">4. Las actividades prácticas y dinámicas facilitaron el aprendizaje.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c4"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">5. Los materiales y recursos compartidos fueron útiles y actualizados.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c5"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN II: DESEMPEÑO DEL FACILITADOR / DOCENTE -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-4">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3 border-slate-100">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">II</span>
+            Desempeño del Facilitador / Docente
+          </h3>
+
+          <div class="divide-y divide-slate-100 text-xs sm:text-sm space-y-3 pt-1">
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">6. Demostró dominio experto de los temas impartidos.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c6"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">7. Explicó los conceptos de manera clara, dinámica y estructurada.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c7"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">8. Fomentó la participación activa y el intercambio de experiencias.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c8"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">9. Respondió de manera clara y oportuna a las dudas e inquietudes.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c9"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">10. Realizó actividades utilizando metodologías activas.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c10"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">11. Mantuvo un trato respetuoso, empático y profesional.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c11"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN III: ASPECTOS LOGÍSTICOS Y ENTORNO DE APRENDIZAJE -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-4">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3 border-slate-100">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">III</span>
+            Aspectos Logísticos y Entorno de Aprendizaje
+          </h3>
+
+          <div class="divide-y divide-slate-100 text-xs sm:text-sm space-y-3 pt-1">
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">12. El espacio físico / plataforma virtual fue adecuado y funcional.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c12"></div>
+            </div>
+            <div class="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span class="text-slate-700 leading-snug">13. La puntualidad y la organización general del curso fueron acordes.</span>
+              <div class="flex items-center space-x-1 shrink-0" data-criterio="c13"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN IV: VALORACIÓN GENERAL -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-6">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3 border-slate-100">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">IV</span>
+            Valoración General
+          </h3>
+
+          <div class="space-y-4 text-xs sm:text-sm">
+            <div>
+              <p class="font-medium text-slate-800 mb-2">14. ¿En qué medida considera que podrá aplicar lo aprendido en su práctica laboral o desempeño diario?</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-300">
+                  <input type="radio" name="aplicabilidad" value="Mucho" checked class="h-4 w-4 text-blue-600">
+                  <span class="font-medium">Mucho</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-300">
+                  <input type="radio" name="aplicabilidad" value="Bastante" class="h-4 w-4 text-blue-600">
+                  <span class="font-medium">Bastante</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-300">
+                  <input type="radio" name="aplicabilidad" value="Poco" class="h-4 w-4 text-blue-600">
+                  <span class="font-medium">Poco</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-300">
+                  <input type="radio" name="aplicabilidad" value="Nada" class="h-4 w-4 text-blue-600">
+                  <span class="font-medium">Nada</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="pt-3">
+              <p class="font-medium text-slate-800 mb-2">15. ¿Recomendaría esta acción formativa a otros colegas o docentes?</p>
+              <div class="grid grid-cols-3 gap-2.5 max-w-md">
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-emerald-50 transition border-slate-300">
+                  <input type="radio" name="recomendacion" value="Sí" checked class="h-4 w-4 text-emerald-600">
+                  <span class="font-semibold text-emerald-800">Sí</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-amber-50 transition border-slate-300">
+                  <input type="radio" name="recomendacion" value="Tal vez" class="h-4 w-4 text-amber-600">
+                  <span class="font-semibold text-amber-800">Tal vez</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 border rounded-xl cursor-pointer hover:bg-rose-50 transition border-slate-300">
+                  <input type="radio" name="recomendacion" value="No" class="h-4 w-4 text-rose-600">
+                  <span class="font-semibold text-rose-800">No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN V: PREGUNTAS ABIERTAS -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-5">
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 border-b pb-3 border-slate-100">
+            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">V</span>
+            Preguntas Abiertas
+          </h3>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" for="aspectos_valiosos">
+                16. ¿Qué aspectos considera que fueron los más valiosos o acertados de este curso?
+              </label>
+              <textarea id="aspectos_valiosos" rows="2.5" placeholder="Escribe aquí los puntos más destacados..."
+                class="w-full rounded-xl border-slate-300 border p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition bg-white"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" for="sugerencias_mejora">
+                17. ¿Qué sugerencias tiene para mejorar futuras ediciones de este programa?
+              </label>
+              <textarea id="sugerencias_mejora" rows="2.5" placeholder="Escribe aquí recomendaciones o sugerencias..."
+                class="w-full rounded-xl border-slate-300 border p-3 text-xs sm:text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition bg-white"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex items-center justify-end gap-3 pt-4">
+          <button type="button" onclick="deseleccionarDocente()" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-200 font-medium text-xs sm:text-sm transition">
+            Limpiar Selección
+          </button>
+          <button type="submit" id="btn-submit" class="px-7 py-3 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm shadow-md flex items-center gap-2 transition cursor-pointer">
+            <i class="ph ph-paper-plane-tilt text-lg"></i>
+            Enviar Evaluación
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ============================================================== -->
+    <!-- PESTAÑA 2: REPORTERÍA Y ANALÍTICA DE SATISFACCIÓN -->
+    <!-- ============================================================== -->
+    <section id="pestana-reporteria" style="display: none;" class="space-y-6">
+      
+      <!-- Encabezado de Reportería -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Dashboard de Satisfacción y Desempeño Docente</h2>
+            <p class="text-xs text-slate-500">Métricas analíticas consolidadas de las evaluaciones en tiempo real</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="cargarEvaluacionesNube()" class="inline-flex items-center gap-2 px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+              <i class="ph ph-arrows-clockwise text-base"></i> Actualizar
+            </button>
+            <button type="button" onclick="exportarCSVEvaluaciones()" class="inline-flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+              <i class="ph ph-microsoft-excel-logo text-base"></i> Exportar a Excel
+            </button>
+            <button type="button" onclick="window.print()" class="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+              <i class="ph ph-printer text-base"></i> Imprimir
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtros de Reportería -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Filtrar por Módulo:</label>
+            <select id="filtro-rep-modulo" onchange="actualizarReporteria()" class="w-full text-xs rounded-lg border-slate-300 border p-2 bg-white">
+              <option value="TODOS">Todos los Módulos (Lengua Española & Matemáticas)</option>
+              <option value="Lengua Española">Lengua Española</option>
+              <option value="Matemáticas">Matemáticas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">Filtrar por Docente:</label>
+            <select id="filtro-rep-docente" onchange="actualizarReporteria()" class="w-full text-xs rounded-lg border-slate-300 border p-2 bg-white">
+              <option value="TODOS">Todos los Facilitadores</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjetas KPI -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-bold">
+            <i class="ph ph-files"></i>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-slate-500 uppercase">Total Evaluaciones</span>
+            <p id="kpi-total-eval" class="text-2xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold">
+            <i class="ph ph-star"></i>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-slate-500 uppercase">Promedio General</span>
+            <p id="kpi-promedio-general" class="text-2xl font-bold text-amber-600">0.0 / 5.0</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl font-bold">
+            <i class="ph ph-thumbs-up"></i>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-slate-500 uppercase">% Recomendaría</span>
+            <p id="kpi-porcentaje-recomendacion" class="text-2xl font-bold text-emerald-600">0%</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold">
+            <i class="ph ph-chalkboard-teacher"></i>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-slate-500 uppercase">Docentes Evaluados</span>
+            <p id="kpi-total-docentes-evaluados" class="text-2xl font-bold text-indigo-600">0</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Gráficos Analíticos -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+            <i class="ph ph-chart-bar text-blue-700 text-lg"></i> Promedio por Facilitador (Escala 1 a 5)
+          </h3>
+          <p class="text-xs text-slate-500 mb-4">Comparativa de desempeño docente de acuerdo a las respuestas</p>
+          <div class="h-64 relative">
+            <canvas id="graficoDocentes"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2">
+            <i class="ph ph-radar text-blue-700 text-lg"></i> Promedio por Dimensión Evaluada
+          </h3>
+          <p class="text-xs text-slate-500 mb-4">Metodología (I), Desempeño Docente (II) y Logística (III)</p>
+          <div class="h-64 relative flex items-center justify-center">
+            <canvas id="graficoDimensiones"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabla Detallada de Evaluaciones Recientes -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 class="font-bold text-slate-800 text-base mb-1">Matriz de Evaluaciones Registradas</h3>
+        <p class="text-xs text-slate-500 mb-4">Registro individual de cada participante con su puntuación consolidada.</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-50 text-slate-700 uppercase font-semibold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-3">Fecha</th>
+                <th class="py-3 px-3">Módulo</th>
+                <th class="py-3 px-3">Docente Evaluado</th>
+                <th class="py-3 px-3 text-center">Grado & Secc.</th>
+                <th class="py-3 px-3 text-center">I. Metodología</th>
+                <th class="py-3 px-3 text-center">II. Desempeño</th>
+                <th class="py-3 px-3 text-center">III. Logística</th>
+                <th class="py-3 px-3 text-center font-bold">Promedio</th>
+                <th class="py-3 px-3 text-center">Recomienda</th>
+                <th class="py-3 px-3 text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-evaluaciones-body" class="divide-y divide-slate-100">
+              <!-- Se puebla dinámicamente con JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Muro de Aspectos Valiosos y Sugerencias Abiertas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h3 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2 text-emerald-800">
+            <i class="ph ph-chat-circle-dots text-emerald-600 text-lg"></i> Aspectos Más Valiosos Destacados
+          </h3>
+          <div id="muro-aspectos-valiosos" class="space-y-2.5 max-h-60 overflow-y-auto pr-1 text-xs">
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h3 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2 text-amber-800">
+            <i class="ph ph-lightbulb text-amber-600 text-lg"></i> Sugerencias de Mejora Consignadas
+          </h3>
+          <div id="muro-sugerencias-mejora" class="space-y-2.5 max-h-60 overflow-y-auto pr-1 text-xs">
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= NOTIFICACIÓN TOAST ================= -->
+  <div id="toast" style="display: none;" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <i id="toast-icon" class="ph ph-check-circle text-emerald-400 text-xl"></i>
+    <span id="toast-mensaje" class="text-sm font-medium">Evaluación registrada exitosamente</span>
+  </div>
+
+  <!-- ================= LÓGICA JAVASCRIPT ================= -->
+  <script>
+    const SUPABASE_URL = 'https://jyholvbfdwrwlxbmutqk.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_aqd06MBizbrDSDwmfw04zQ_-HN1aElG';
+
+    let moduloActual = 'Lengua Española';
+    let facilitadorSeleccionado = null;
+    let evaluacionesCache = [];
+    let chartDocentesInstance = null;
+    let chartDimensionesInstance = null;
+
+    const FACILITADORES_LENGUA = [
+      { no: 1, nombre: 'Alba Luz Duran de la Rosa', grado: '1ER GRADO', seccion: 'A' },
+      { no: 2, nombre: 'Francisco Ramírez D.', grado: '1ER GRADO', seccion: 'B' },
+      { no: 3, nombre: 'Katiuska Yokaira Benzan Encarnación', grado: '2DO GRADO', seccion: 'A' },
+      { no: 4, nombre: 'Gregory alexander Pérez Ramírez', grado: '2DO GRADO', seccion: 'B' },
+      { no: 5, nombre: 'Dori Rosalía Báez Ramírez', grado: '3ER GRADO', seccion: 'A' },
+      { no: 6, nombre: 'María Magdalena Alcántara Mateo', grado: '3ER GRADO', seccion: 'B' },
+      { no: 7, nombre: 'Santa Dolores Feliz Diaz', grado: 'MULTIGRADO', seccion: '-' }
+    ];
+
+    const FACILITADORES_MATEMATICA = [
+      { no: 1, nombre: 'Digna Ogando De la Rosa', grado: '1ER GRADO', seccion: 'A' },
+      { no: 2, nombre: 'Pablo Rodríguez', grado: '1ER GRADO', seccion: 'B' },
+      { no: 3, nombre: 'Leydi Laura tapia Taveras', grado: '2DO GRADO', seccion: 'A' },
+      { no: 4, nombre: 'Francis Esther de los santos Ramírez', grado: '2DO GRADO', seccion: 'B' },
+      { no: 5, nombre: 'Miguel Ángel Valdez', grado: '3ER GRADO', seccion: 'A' },
+      { no: 6, nombre: 'Pascual Jesús De los Santos Mora', grado: '3ER GRADO', seccion: 'B' },
+      { no: 7, nombre: 'Claudia Charityn De los Santos Acosta', grado: 'MULTIGRADO', seccion: '-' }
+    ];
+
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      const campoFecha = document.getElementById('fecha_evaluacion');
+      if (campoFecha) campoFecha.value = new Date().toISOString().split('T')[0];
+
+      generarBotonesLikert();
+      renderizarTablaDocentes('Lengua Española');
+      cargarEvaluacionesNube();
+    });
+
+    function generarBotonesLikert() {
+      for (let i = 1; i <= 13; i++) {
+        const contenedor = document.querySelector(`[data-criterio="c${i}"]`);
+        if (!contenedor) continue;
+
+        let html = '';
+        for (let valor = 1; valor <= 5; valor++) {
+          const checked = valor === 5 ? 'checked' : '';
+          html += `
+            <div style="display: inline-block; margin-right: 3px;">
+              <input type="radio" id="c${i}_v${valor}" name="c${i}" value="${valor}" ${checked} class="likert-radio" style="position: absolute; opacity: 0; pointer-events: none;">
+              <label for="c${i}_v${valor}" class="likert-btn-label" title="Puntuación ${valor}">
+                ${valor}
+              </label>
+            </div>
+          `;
+        }
+        contenedor.innerHTML = html;
+      }
+    }
+
+    function cambiarModulo(mod) {
+      moduloActual = mod;
+      document.getElementById('titulo-docentes').textContent = `3. Docentes / Facilitadores del Módulo de ${mod}`;
+      
+      const btnLengua = document.getElementById('btn-modulo-lengua');
+      const btnMate = document.getElementById('btn-modulo-mate');
+
+      if (mod === 'Lengua Española') {
+        btnLengua.className = 'p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-blue-700 bg-blue-50 text-blue-900 shadow-sm flex items-center gap-2';
+        btnLengua.querySelector('span').className = 'w-3 h-3 rounded-full bg-blue-700 inline-block';
+        btnMate.className = 'p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-slate-300 bg-white text-slate-700 hover:bg-slate-50 flex items-center gap-2';
+        btnMate.querySelector('span').className = 'w-3 h-3 rounded-full bg-slate-300 inline-block';
+      } else {
+        btnMate.className = 'p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-blue-700 bg-blue-50 text-blue-900 shadow-sm flex items-center gap-2';
+        btnMate.querySelector('span').className = 'w-3 h-3 rounded-full bg-blue-700 inline-block';
+        btnLengua.className = 'p-3 border rounded-xl font-semibold text-xs sm:text-sm text-left transition border-slate-300 bg-white text-slate-700 hover:bg-slate-50 flex items-center gap-2';
+        btnLengua.querySelector('span').className = 'w-3 h-3 rounded-full bg-slate-300 inline-block';
+      }
+
+      renderizarTablaDocentes(mod);
+      deseleccionarDocente();
+    }
+
+    function renderizarTablaDocentes(mod) {
+      const lista = mod === 'Lengua Española' ? FACILITADORES_LENGUA : FACILITADORES_MATEMATICA;
+      const tbody = document.getElementById('tabla-facilitadores-body');
+      tbody.innerHTML = '';
+
+      lista.forEach(doc => {
+        const tr = document.createElement('tr');
+        tr.id = `fila-doc-${doc.no}`;
+        tr.className = 'hover:bg-slate-50 transition cursor-pointer border-b border-slate-100';
+        tr.onclick = () => seleccionarDocente(doc);
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 text-center">
+            <span id="check-icon-${doc.no}" class="inline-flex items-center justify-center w-5 h-5 rounded border border-slate-300 text-xs font-bold text-transparent bg-white">✓</span>
+          </td>
+          <td class="py-2.5 px-3 text-center text-slate-400 font-mono font-medium">${doc.no}</td>
+          <td class="py-2.5 px-4 font-semibold text-slate-800">${doc.nombre}</td>
+          <td class="py-2.5 px-3 text-center text-slate-600 font-medium">${doc.grado}</td>
+          <td class="py-2.5 px-3 text-center text-slate-600 font-medium">${doc.seccion}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function seleccionarDocente(doc) {
+      facilitadorSeleccionado = doc;
+
+      document.querySelectorAll('#tabla-facilitadores-body tr').forEach(r => {
+        r.classList.remove('tr-docente-active');
+      });
+      document.querySelectorAll('[id^="check-icon-"]').forEach(span => {
+        span.className = 'inline-flex items-center justify-center w-5 h-5 rounded border border-slate-300 text-xs font-bold text-transparent bg-white';
+      });
+
+      const fila = document.getElementById(`fila-doc-${doc.no}`);
+      if (fila) fila.classList.add('tr-docente-active');
+
+      const checkIcon = document.getElementById(`check-icon-${doc.no}`);
+      if (checkIcon) {
+        checkIcon.className = 'inline-flex items-center justify-center w-5 h-5 rounded border border-blue-700 text-xs font-bold text-white bg-blue-700 shadow-sm';
+      }
+
+      document.getElementById('nombre-docente-seleccionado').textContent = doc.nombre;
+      document.getElementById('detalle-docente-badge').textContent = `${doc.grado} - Sección ${doc.seccion}`;
+    }
+
+    function deseleccionarDocente() {
+      facilitadorSeleccionado = null;
+      document.querySelectorAll('#tabla-facilitadores-body tr').forEach(r => r.classList.remove('tr-docente-active'));
+      document.querySelectorAll('[id^="check-icon-"]').forEach(span => {
+        span.className = 'inline-flex items-center justify-center w-5 h-5 rounded border border-slate-300 text-xs font-bold text-transparent bg-white';
+      });
+      document.getElementById('nombre-docente-seleccionado').textContent = 'Ninguno (haz clic en un docente arriba)';
+      document.getElementById('detalle-docente-badge').textContent = '';
+    }
+
+    async function guardarEvaluacion(e) {
+      e.preventDefault();
+
+      if (!facilitadorSeleccionado) {
+        alert('⚠️ Por favor haz clic sobre el docente que deseas evaluar en la tabla antes de guardar.');
+        document.getElementById('titulo-docentes').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      const fecha = document.getElementById('fecha_evaluacion').value;
+      if (!fecha) {
+        alert('Por favor selecciona una fecha de evaluación.');
+        return;
+      }
+
+      const btnSubmit = document.getElementById('btn-submit');
+      const textoOriginal = btnSubmit.innerHTML;
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> Enviando...`;
+
+      const criterios = {};
+      for (let i = 1; i <= 13; i++) {
+        const val = document.querySelector(`input[name="c${i}"]:checked`);
+        criterios[`c${i}`] = val ? parseInt(val.value) : 5;
+      }
+
+      const aplicabilidadSel = document.querySelector('input[name="aplicabilidad"]:checked');
+      const recomendacionSel = document.querySelector('input[name="recomendacion"]:checked');
+
+      const nuevaEvaluacion = {
+        fecha: fecha,
+        modulo: moduloActual,
+        docente: facilitadorSeleccionado.nombre,
+        grado: facilitadorSeleccionado.grado,
+        seccion: facilitadorSeleccionado.seccion,
+        ...criterios,
+        aplicabilidad: aplicabilidadSel ? aplicabilidadSel.value : 'Mucho',
+        recomendacion: recomendacionSel ? recomendacionSel.value : 'Sí',
+        aspectos_valiosos: document.getElementById('aspectos_valiosos').value.trim(),
+        sugerencias_mejora: document.getElementById('sugerencias_mejora').value.trim()
+      };
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/evaluaciones_satisfaccion`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify([nuevaEvaluacion])
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`Error en el servidor (${response.status}): ${errText}`);
+        }
+
+        mostrarToast(`✅ ¡Evaluación enviada con éxito! Muchas gracias.`);
+
+        document.getElementById('aspectos_valiosos').value = '';
+        document.getElementById('sugerencias_mejora').value = '';
+        deseleccionarDocente();
+
+        cargarEvaluacionesNube();
+
+      } catch (error) {
+        console.error('Error al guardar:', error);
+        mostrarToast(`⚠️ Error al enviar: ${error.message}`, true);
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = textoOriginal;
+      }
+    }
+
+    async function cargarEvaluacionesNube() {
+      const badge = document.getElementById('badge-cloud-status');
+      badge.innerHTML = `<span class="w-2 h-2 mr-1.5 bg-amber-500 rounded-full animate-spin"></span> Sincronizando...`;
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/evaluaciones_satisfaccion?select=*&order=id.desc`, {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Status ${response.status}`);
+        }
+
+        evaluacionesCache = await response.json();
+        badge.innerHTML = `<span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> En línea (${evaluacionesCache.length})`;
+        actualizarReporteria();
+
+      } catch (err) {
+        console.warn('Fallo al consultar Supabase:', err);
+        badge.innerHTML = `<span class="w-2 h-2 mr-1.5 bg-rose-500 rounded-full"></span> Sin conexión`;
+      }
+    }
+
+    async function eliminarEvaluacion(id) {
+      if (confirm('¿Deseas eliminar definitivamente este registro de la base de datos?')) {
+        try {
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/evaluaciones_satisfaccion?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+          });
+
+          if (response.ok) {
+            mostrarToast('Registro eliminado con éxito', true);
+            cargarEvaluacionesNube();
+          } else {
+            alert('No se pudo eliminar el registro.');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    function cambiarPestana(p) {
+      ['evaluacion', 'reporteria'].forEach(t => {
+        const seccion = document.getElementById(`pestana-${t}`);
+        const boton = document.getElementById(`tab-btn-${t}`);
+        if (t === p) {
+          seccion.style.display = 'block';
+          boton.className = 'tab-btn-active inline-flex items-center py-3 px-2 border-b-2 text-sm font-medium text-blue-700 transition';
+        } else {
+          seccion.style.display = 'none';
+          boton.className = 'inline-flex items-center py-3 px-2 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-700 transition';
+        }
+      });
+
+      if (p === 'reporteria') {
+        cargarEvaluacionesNube();
+      }
+    }
+
+    function actualizarReporteria() {
+      const evaluaciones = evaluacionesCache;
+      const filtroModulo = document.getElementById('filtro-rep-modulo').value;
+      const selectDoc = document.getElementById('filtro-rep-docente');
+
+      const valDocActual = selectDoc.value;
+      const docentesUnicos = [...new Set(evaluaciones.map(e => e.docente))];
+      selectDoc.innerHTML = '<option value="TODOS">Todos los Facilitadores</option>';
+      docentesUnicos.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        selectDoc.appendChild(opt);
+      });
+      if (docentesUnicos.includes(valDocActual)) selectDoc.value = valDocActual;
+
+      const filtroDocente = selectDoc.value;
+
+      const filtrados = evaluaciones.filter(e => {
+        const cModulo = filtroModulo === 'TODOS' || e.modulo === filtroModulo;
+        const cDocente = filtroDocente === 'TODOS' || e.docente === filtroDocente;
+        return cModulo && cDocente;
+      });
+
+      const totalEval = filtrados.length;
+      let sumaGlobal = 0;
+      let totalSi = 0;
+      const docentesSet = new Set();
+
+      filtrados.forEach(e => {
+        docentesSet.add(e.docente);
+        if (e.recomendacion === 'Sí') totalSi++;
+        let sumaIndiv = 0;
+        for (let i = 1; i <= 13; i++) sumaIndiv += (e[`c${i}`] || 0);
+        sumaGlobal += (sumaIndiv / 13);
+      });
+
+      const promGeneral = totalEval > 0 ? (sumaGlobal / totalEval).toFixed(2) : '0.0';
+      const pctRecom = totalEval > 0 ? Math.round((totalSi / totalEval) * 100) : 0;
+
+      document.getElementById('kpi-total-eval').textContent = totalEval;
+      document.getElementById('kpi-promedio-general').textContent = `${promGeneral} / 5.0`;
+      document.getElementById('kpi-porcentaje-recomendacion').textContent = `${pctRecom}%`;
+      document.getElementById('kpi-total-docentes-evaluados').textContent = docentesSet.size;
+
+      const tbody = document.getElementById('tabla-evaluaciones-body');
+      tbody.innerHTML = '';
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center py-6 text-slate-400">Aún no hay evaluaciones registradas en el sistema.</td></tr>`;
+      } else {
+        filtrados.forEach(e => {
+          const promI = ((e.c1 + e.c2 + e.c3 + e.c4 + e.c5) / 5).toFixed(1);
+          const promII = ((e.c6 + e.c7 + e.c8 + e.c9 + e.c10 + e.c11) / 6).toFixed(1);
+          const promIII = ((e.c12 + e.c13) / 2).toFixed(1);
+          let sumTotal = 0;
+          for (let i = 1; i <= 13; i++) sumTotal += e[`c${i}`];
+          const promTotal = (sumTotal / 13).toFixed(2);
+
+          const badgeColor = promTotal >= 4.5 ? 'bg-emerald-100 text-emerald-800' :
+                             promTotal >= 3.5 ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800';
+
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+          tr.innerHTML = `
+            <td class="py-3 px-3 font-medium text-slate-700">${e.fecha}</td>
+            <td class="py-3 px-3 text-slate-600 font-semibold">${e.modulo}</td>
+            <td class="py-3 px-3 font-bold text-slate-900">${e.docente}</td>
+            <td class="py-3 px-3 text-center text-slate-500 font-mono">${e.grado} (${e.seccion})</td>
+            <td class="py-3 px-3 text-center font-medium">${promI}</td>
+            <td class="py-3 px-3 text-center font-medium">${promII}</td>
+            <td class="py-3 px-3 text-center font-medium">${promIII}</td>
+            <td class="py-3 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${badgeColor}">${promTotal}</span></td>
+            <td class="py-3 px-3 text-center font-semibold ${e.recomendacion === 'Sí' ? 'text-emerald-700' : 'text-slate-500'}">${e.recomendacion}</td>
+            <td class="py-3 px-3 text-right">
+              <button type="button" onclick="eliminarEvaluacion(${e.id})" class="text-rose-500 hover:text-rose-700 p-1" title="Eliminar registro">
+                <i class="ph ph-trash text-base"></i>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      const muroValiosos = document.getElementById('muro-aspectos-valiosos');
+      const muroSugerencias = document.getElementById('muro-sugerencias-mejora');
+      muroValiosos.innerHTML = '';
+      muroSugerencias.innerHTML = '';
+
+      const conValiosos = filtrados.filter(e => e.aspectos_valiosos);
+      if (conValiosos.length === 0) {
+        muroValiosos.innerHTML = '<p class="text-slate-400 italic">No hay comentarios en este filtro.</p>';
+      } else {
+        conValiosos.forEach(e => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-lg bg-emerald-50 border border-emerald-100 text-slate-700';
+          item.innerHTML = `<strong class="text-emerald-800">${e.docente}:</strong> "${e.aspectos_valiosos}"`;
+          muroValiosos.appendChild(item);
+        });
+      }
+
+      const conSugerencias = filtrados.filter(e => e.sugerencias_mejora);
+      if (conSugerencias.length === 0) {
+        muroSugerencias.innerHTML = '<p class="text-slate-400 italic">No hay sugerencias en este filtro.</p>';
+      } else {
+        conSugerencias.forEach(e => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-lg bg-amber-50 border border-amber-100 text-slate-700';
+          item.innerHTML = `<strong class="text-amber-800">${e.docente}:</strong> "${e.sugerencias_mejora}"`;
+          muroSugerencias.appendChild(item);
+        });
+      }
+
+      if (typeof Chart !== 'undefined') {
+        renderizarGraficosEvaluacion(filtrados);
+      }
+    }
+
+    function renderizarGraficosEvaluacion(datos) {
+      try {
+        const docenteProm = {};
+        const docenteCount = {};
+
+        datos.forEach(d => {
+          let sum = 0;
+          for (let i = 1; i <= 13; i++) sum += d[`c${i}`];
+          const prom = sum / 13;
+          docenteProm[d.docente] = (docenteProm[d.docente] || 0) + prom;
+          docenteCount[d.docente] = (docenteCount[d.docente] || 0) + 1;
+        });
+
+        const labelsDocentes = Object.keys(docenteProm);
+        const dataDocentes = labelsDocentes.map(l => (docenteProm[l] / docenteCount[l]).toFixed(2));
+
+        const canvasDoc = document.getElementById('graficoDocentes');
+        if (canvasDoc) {
+          const ctxDoc = canvasDoc.getContext('2d');
+          if (chartDocentesInstance) chartDocentesInstance.destroy();
+
+          chartDocentesInstance = new Chart(ctxDoc, {
+            type: 'bar',
+            data: {
+              labels: labelsDocentes,
+              datasets: [{
+                label: 'Promedio Satisfacción (1 a 5)',
+                data: dataDocentes,
+                backgroundColor: '#1d4ed8',
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { min: 0, max: 5, ticks: { stepSize: 1 } },
+                x: { ticks: { autoSkip: false, maxRotation: 25 } }
+              }
+            }
+          });
+        }
+
+        const canvasDim = document.getElementById('graficoDimensiones');
+        if (canvasDim) {
+          let sumDimI = 0, sumDimII = 0, sumDimIII = 0;
+          datos.forEach(d => {
+            sumDimI += ((d.c1 + d.c2 + d.c3 + d.c4 + d.c5) / 5);
+            sumDimII += ((d.c6 + d.c7 + d.c8 + d.c9 + d.c10 + d.c11) / 6);
+            sumDimIII += ((d.c12 + d.c13) / 2);
+          });
+          const n = datos.length || 1;
+          const promDimI = (sumDimI / n).toFixed(2);
+          const promDimII = (sumDimII / n).toFixed(2);
+          const promDimIII = (sumDimIII / n).toFixed(2);
+
+          const ctxDim = canvasDim.getContext('2d');
+          if (chartDimensionesInstance) chartDimensionesInstance.destroy();
+
+          chartDimensionesInstance = new Chart(ctxDim, {
+            type: 'radar',
+            data: {
+              labels: ['I. Metodología y Contenido', 'II. Desempeño Docente', 'III. Logística y Entorno'],
+              datasets: [{
+                label: 'Puntuación Promedio',
+                data: [promDimI, promDimII, promDimIII],
+                backgroundColor: 'rgba(30, 64, 175, 0.2)',
+                borderColor: '#1e40af',
+                pointBackgroundColor: '#1e40af',
+                pointBorderColor: '#fff'
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                r: { min: 0, max: 5, ticks: { stepSize: 1 } }
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Error al renderizar gráficos:', e);
+      }
+    }
+
+    function exportarCSVEvaluaciones() {
+      const lista = evaluacionesCache;
+      if (lista.length === 0) {
+        alert('No hay evaluaciones registradas para exportar.');
+        return;
+      }
+
+      const headers = [
+        "ID", "Fecha", "Modulo", "Docente", "Grado", "Seccion",
+        "C1_Objetivos", "C2_Expectativas", "C3_Tiempo", "C4_Practicas", "C5_Materiales",
+        "C6_Dominio", "C7_Claridad", "C8_Participacion", "C9_Dudas", "C10_MetodologiaActiva", "C11_Respeto",
+        "C12_Espacio", "C13_Puntualidad", "Aplicabilidad", "Recomendacion", "Aspectos_Valiosos", "Sugerencias_Mejora", "Creado_En"
+      ];
+
+      const filas = lista.map(e => [
+        e.id, `"${e.fecha}"`, `"${e.modulo}"`, `"${e.docente}"`, `"${e.grado}"`, `"${e.seccion}"`,
+        e.c1, e.c2, e.c3, e.c4, e.c5,
+        e.c6, e.c7, e.c8, e.c9, e.c10, e.c11,
+        e.c12, e.c13,
+        `"${e.aplicabilidad}"`, `"${e.recomendacion}"`,
+        `"${(e.aspectos_valiosos || '').replace(/"/g, '""')}"`,
+        `"${(e.sugerencias_mejora || '').replace(/"/g, '""')}"`,
+        `"${e.creado_en || ''}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(';'), ...filas.map(f => f.join(';'))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = `Evaluaciones_Diplomado_UASD_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(enlace);
+      enlace.click();
+      document.body.removeChild(enlace);
+      mostrarToast('Archivo Excel descargado con éxito');
+    }
+
+    function mostrarToast(msg, esError = false) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-mensaje').textContent = msg;
+      toast.classList.remove('bg-rose-900', 'bg-slate-900');
+      if (esError) {
+        toast.classList.add('bg-rose-900');
+        document.getElementById('toast-icon').className = 'ph ph-warning-circle text-rose-300 text-xl';
+      } else {
+        toast.classList.add('bg-slate-900');
+        document.getElementById('toast-icon').className = 'ph ph-check-circle text-emerald-400 text-xl';
+      }
+
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
